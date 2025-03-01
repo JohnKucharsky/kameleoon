@@ -1,12 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { API_URL, ENDPOINTS } from '../../url.ts'
 import { Site } from '@/@types/types.ts'
 
-export default function useGetSites(): [
-  Site[],
-  Dispatch<SetStateAction<Site[]>>,
-] {
+export default function useGetSites(): [Site[]] {
   const [sites, setSites] = useState<Site[]>([])
 
   useEffect(() => {
@@ -17,5 +14,5 @@ export default function useGetSites(): [
     fetcher().catch(console.error)
   }, [])
 
-  return [sites, setSites]
+  return [sites]
 }

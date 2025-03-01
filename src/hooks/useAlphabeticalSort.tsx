@@ -14,14 +14,16 @@ export default function useAlphabeticalSort({
   tests,
 }: {
   sitesObj: Record<number, Site>
-  tests: Test[]
+  tests: Test[] | null
 }) {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Test | null
     direction: 'asc' | 'desc'
   } | null>(null)
 
-  const sortedTests = [...tests].sort((a, b) => {
+  const testCopy = tests ? [...tests] : []
+
+  const sortedTests = testCopy.sort((a, b) => {
     if (!sortConfig) return 0
 
     const { key, direction } = sortConfig

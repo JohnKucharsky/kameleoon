@@ -20,3 +20,7 @@ export function cleanUrl(url: string | undefined): string {
   if (!url) return 'N/A'
   return url.replace(/^(https?:\/\/)?(www\.)?/, '')
 }
+
+export function capitalizeFirstLetter(input: string): string {
+  return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()
+}

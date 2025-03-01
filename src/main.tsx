@@ -18,7 +18,7 @@ if (container) {
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path={'/result/:testId'} element={<Results />} />
+            <Route path={'/results/:testId'} element={<Results />} />
             <Route path={'/finalize/:testId'} element={<Finalize />} />
           </Route>
         </Routes>

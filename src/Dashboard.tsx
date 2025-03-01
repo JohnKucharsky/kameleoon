@@ -1,106 +1,101 @@
-import { Test } from '@/@types/types.ts'
-import SortableCell from '@/components/SortableCell.tsx'
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import { Site, Test } from '@/@types/types.ts'
+import NoResults from '@/components/NoResults.tsx'
+import SearchInput from '@/components/SearchInput.tsx'
 import useAlphabeticalSort from '@/hooks/useAlphabeticalSort.tsx'
 import useGetSites from '@/hooks/useGetSites.tsx'
 import useGetTests from '@/hooks/useGetTests.tsx'
-import { cleanUrl, keyBy } from '@/utils.ts'
+import useSearch from '@/hooks/useSearch.tsx'
+import TableHead from '@/TableHead.tsx'
+import TableRow from '@/TableRow.tsx'
+import { keyBy } from '@/utils.ts'
 
 export default function Dashboard() {
-  const [tests] = useGetTests()
+  const [tests, loading] = useGetTests()
   const [sites] = useGetSites()
-  const sitesObj = keyBy(sites, 'id')
+  const sitesObj = useMemo(() => keyBy(sites, 'id'), [sites])
+  const { query, setQuery, filteredTests } = useSearch(tests)
   const { sortedTests, sortConfig, setSortConfig } = useAlphabeticalSort({
     sitesObj,
-    tests,
+    tests: filteredTests,
   })
 
-  const handleSort = (key: keyof Test) => {
-    setSortConfig((prev) => {
-      if (prev?.key === key) {
-        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
-      }
-      return { key, direction: 'asc' }
-    })
-  }
+  const handleSort = useCallback(
+    (key: keyof Test) => {
+      setSortConfig((prev) => {
+        if (prev?.key === key) {
+          return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
+        }
+        return { key, direction: 'asc' }
+      })
+    },
+    [setSortConfig],
+  )
 
   return (
     <div>
-      <h2 className="main-title" style={{ marginBottom: '2rem' }}>
-        Dashboard
-      </h2>
-      <input
-        type="text"
-        className="input"
-        placeholder="What test are you looking for?"
-      />
+      <div className={'top-spacing-wrapper'}>
+        <h2 className="main-title" style={{ marginBottom: '2rem' }}>
+          Dashboard
+        </h2>
+        <SearchInput
+          testsQty={sortedTests.length}
+          query={query}
+          setQuery={setQuery}
+        />
+      </div>
       <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <SortableCell
-                sortOrder={sortConfig?.direction || null}
-                handleSort={() => handleSort('name')}
-                showArrow={sortConfig?.key === 'name'}
-              >
-                <h5 className="table-head-text">Name</h5>
-              </SortableCell>
-              <SortableCell
-                sortOrder={sortConfig?.direction || null}
-                handleSort={() => handleSort('type')}
-                showArrow={sortConfig?.key === 'type'}
-              >
-                <h5 className="table-head-text">Type</h5>
-              </SortableCell>
-              <SortableCell
-                sortOrder={sortConfig?.direction || null}
-                handleSort={() => handleSort('status')}
-                showArrow={sortConfig?.key === 'status'}
-              >
-                <h5 className="table-head-text">Status</h5>
-              </SortableCell>
-              <SortableCell
-                sortOrder={sortConfig?.direction || null}
-                handleSort={() => handleSort('siteId')}
-                showArrow={sortConfig?.key === 'siteId'}
-              >
-                <h5 className="table-head-text">Site</h5>
-              </SortableCell>
-              <th>
-                <h5 className="table-head-text">Action</h5>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedTests.map((row, index) => (
-              <tr key={index} className="pb" style={{ height: '20px' }}>
-                <td>
-                  <h6 className="table-bold-text">{row.name}</h6>
-                </td>
-                <td>
-                  <p className="table-normal-text">{row.type}</p>
-                </td>
-                <td className={row.status.toLowerCase()}>
-                  <p className="table-normal-text">{row.status}</p>
-                </td>
-                <td>
-                  <p className="table-normal-text">
-                    {cleanUrl(sitesObj[row.siteId]?.url)}
-                  </p>
-                </td>
-                <td>
-                  <button
-                    className={row.status === 'DRAFT' ? 'finalize' : 'results'}
-                  >
-                    <div className="table-normal-text">
-                      {row.status === 'DRAFT' ? 'finalize' : 'results'}
-                    </div>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <TableEl
+          sortConfig={sortConfig}
+          handleSort={handleSort}
+          sortedTests={sortedTests}
+          sitesObj={sitesObj}
+          loading={loading}
+          setQuery={setQuery}
+        />
       </div>
     </div>
+  )
+}
+
+const TableEl = ({
+  sortConfig,
+  handleSort,
+  sortedTests,
+  sitesObj,
+  loading,
+  setQuery,
+}: {
+  sortConfig: {
+    key: keyof Test | null
+    direction: 'asc' | 'desc'
+  } | null
+  handleSort: (key: keyof Test) => void
+  sortedTests: Test[]
+  sitesObj: Record<string | number, Site>
+  loading: boolean
+  setQuery: Dispatch<SetStateAction<string>>
+}) => {
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (sortedTests.length === 0) {
+    return <NoResults setQuery={setQuery} />
+  }
+
+  return (
+    <>
+      <table>
+        <thead>
+          <TableHead sortConfig={sortConfig} handleSort={handleSort} />
+        </thead>
+        <tbody>
+          {sortedTests.map((row, index) => (
+            <TableRow test={row} key={index} sitesObj={sitesObj} />
+          ))}
+        </tbody>
+      </table>
+    </>
   )
 }

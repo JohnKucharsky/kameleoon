@@ -15,8 +15,12 @@ export default function SortableCell({
     <th onClick={() => handleSort()} style={{ cursor: 'pointer' }}>
       <div className={'row-center'}>
         {children}
-        {showArrow && sortOrder === 'asc' && <ChevronUp size={'1rem'} />}
-        {showArrow && sortOrder === 'desc' && <ChevronDown size={'1rem'} />}
+        {showArrow && sortOrder === 'asc' && (
+          <ChevronUp size={'1rem'} color={'#999999'} />
+        )}
+        {showArrow && sortOrder === 'desc' && (
+          <ChevronDown size={'1rem'} color={'#999999'} />
+        )}
       </div>
     </th>
   )
