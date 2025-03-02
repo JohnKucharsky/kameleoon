@@ -12,7 +12,7 @@ export default function SearchInput({
 }) {
   return (
     <div className="search-input">
-      <Search className="search-icon" width={13} height={14} />
+      <Search className="search-icon" width={15} height={15} />
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}

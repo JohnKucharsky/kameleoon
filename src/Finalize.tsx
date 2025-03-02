@@ -1,5 +1,6 @@
-import { Fragment } from 'react'
 import { useParams } from 'react-router'
+import BackHome from '@/components/BackHome.tsx'
+import DisplayTests from '@/components/DisplayTests.tsx'
 import useGetTests from '@/hooks/useGetTests.tsx'
 
 export default function Finalize() {
@@ -7,26 +8,13 @@ export default function Finalize() {
   const [tests, loading] = useGetTests(params.testId)
 
   return (
-    <div>
-      <h2 className="main-title" style={{ marginBottom: '2rem' }}>
+    <div className={'detailed-wrapper'}>
+      <h2 className="main-title" style={{ marginBottom: '8px' }}>
         Finalize
       </h2>
       <h3 className="secondary-title">Spring promotion</h3>
-      {loading ? (
-        'Loading...'
-      ) : (tests?.length || 0) > 0 ? (
-        <div>
-          {tests?.map((test) => (
-            <Fragment>
-              {Object.entries(test).map(([key, value]) => (
-                <p key={test.id + key}>{`${key}: ${value}`}</p>
-              ))}
-            </Fragment>
-          ))}
-        </div>
-      ) : (
-        <p>No tests found</p>
-      )}
+      <DisplayTests tests={tests} loading={loading} />
+      <BackHome />
     </div>
   )
 }

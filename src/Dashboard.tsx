@@ -35,7 +35,7 @@ export default function Dashboard() {
   return (
     <div>
       <div className={'top-spacing-wrapper'}>
-        <h2 className="main-title" style={{ marginBottom: '2rem' }}>
+        <h2 className="main-title" style={{ marginBottom: '44px' }}>
           Dashboard
         </h2>
         <SearchInput

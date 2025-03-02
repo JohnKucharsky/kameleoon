@@ -7,7 +7,9 @@ export default function NoResults({
 }) {
   return (
     <div className={'no-results-wrapper'}>
-      <h4>Your search did not match any results.</h4>
+      <h4 className={'no-results-title'}>
+        Your search did not match any results.
+      </h4>
       <button onClick={() => setQuery('')} className={'base-button results'}>
         Reset
       </button>

@@ -38,7 +38,7 @@ function TableRow({
       <td>
         <p className="table-normal-text">{testTypeToText[test.type]}</p>
       </td>
-      <td className={test.status.toLowerCase()}>
+      <td className={`status ${test.status.toLowerCase()}`}>
         <p>{capitalizeFirstLetter(test.status)}</p>
       </td>
       <td>

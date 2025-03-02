@@ -13,13 +13,13 @@ export default function SortableCell({
 }>) {
   return (
     <th onClick={() => handleSort()} style={{ cursor: 'pointer' }}>
-      <div className={'row-center'}>
+      <div className={'flex-center'}>
         {children}
         {showArrow && sortOrder === 'asc' && (
-          <ChevronUp size={'1rem'} color={'#999999'} />
+          <ChevronUp size={'16px'} color={'#999999'} />
         )}
         {showArrow && sortOrder === 'desc' && (
-          <ChevronDown size={'1rem'} color={'#999999'} />
+          <ChevronDown size={'16px'} color={'#999999'} />
         )}
       </div>
     </th>
